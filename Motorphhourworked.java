@@ -105,7 +105,7 @@ public class Motorphhourworked {
 
                     // Display the daily time difference in hours:minutes format
                     String timeDifferenceFormatted = formatTimeDifference(timeDifferenceMinutes);
-                    System.out.println("Date: " + date + ", Time Difference: " + timeDifferenceFormatted);
+                    System.out.println("Date: " + date + ", Total hours worked: " + timeDifferenceFormatted);
                 }
             } catch (ParseException e) {
                 System.out.println("Error parsing date: " + date);
@@ -114,7 +114,7 @@ public class Motorphhourworked {
 
         // Display the total time difference in hours:minutes format
         String totalTimeDifferenceFormatted = formatTimeDifference(totalTimeDifferenceMinutes);
-        System.out.println("Total Time Difference between " + startDate + " and " + endDate + ": " + totalTimeDifferenceFormatted);
+        System.out.println("Total hours worked between " + startDate + " and " + endDate + ": " + totalTimeDifferenceFormatted);
 
         scanner.close();
     }
