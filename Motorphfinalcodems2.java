@@ -267,7 +267,7 @@ public class Motorphfinalcodems2 {
         double withholdingTax = calculateWithholdingTax(taxableIncome);
 
         // Compute net salary
-        double netSalary = basicSalary - withholdingTax;
+        double netSalary = taxableIncome - withholdingTax;
 
         // Display results
         System.out.println("\nNet Salary Calculation for Employee: " + empDetails[0] + " (" + empNumber + ")");
