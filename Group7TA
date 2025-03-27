@@ -12,7 +12,7 @@ import java.util.*;                   // Collections and utilities
 abstract class Deduction {
     String name;  // Name of the deduction
     
-    // Constructor to initialize deduction name
+    // Constructor to initialize the deduction name
     public Deduction(String name) {
         this.name = name;  // Set deduction name
     }
