@@ -1,18 +1,18 @@
 package revisedms2;
 
 // Import necessary libraries
-import java.io.BufferedReader;       // File reading
-import java.io.FileReader;            // File handling
-import java.io.IOException;           // Input/output exceptions
-import java.text.ParseException;      // Date parsing errors
-import java.text.SimpleDateFormat;    // Date formatting
-import java.util.*;                   // Collections and utilities
+import java.io.BufferedReader;       // For reading files
+import java.io.FileReader;            // For handing file operations 
+import java.io.IOException;           // For handling input/output exceptions 
+import java.text.ParseException;      // For handling date parsing errors
+import java.text.SimpleDateFormat;    // For formatting dates
+import java.util.*;                   // For collections and utility functions
 
-// Base class for all deduction types
+// Abstract base class representing a deduction type
 abstract class Deduction {
     String name;  // Name of the deduction
     
-    // Constructor to initialize deduction name
+    // Constructor to initialize the deduction name
     public Deduction(String name) {
         this.name = name;  // Set deduction name
     }
@@ -26,7 +26,7 @@ abstract class Deduction {
     }
 }
 
-// SSS deduction implementation
+// Represents SSS deduction calculation based on salary
 class SSSDeduction extends Deduction {
     // Constructor sets name to "SSS"
     public SSSDeduction() {
@@ -43,7 +43,7 @@ class SSSDeduction extends Deduction {
     }
 }
 
-// PhilHealth deduction implementation
+// Represents PhilHealth deduction calculation
 class PhilHealthDeduction extends Deduction {
     // Constructor sets name to "PhilHealth"
     public PhilHealthDeduction() {
@@ -59,7 +59,7 @@ class PhilHealthDeduction extends Deduction {
     }
 }
 
-// Pag-IBIG deduction implementation
+// Represents Pag-IBIG deduction calculation
 class PagIBIGDeduction extends Deduction {
     // Constructor sets name to "Pag-IBIG"
     public PagIBIGDeduction() {
@@ -77,7 +77,7 @@ class PagIBIGDeduction extends Deduction {
     }
 }
 
-// Handles payroll calculations
+// Handles payroll calculations including deductions and withholding tax 
 class PayrollCalculator {
     List<Deduction> deductions;  // List of deductions
     
@@ -89,14 +89,14 @@ class PayrollCalculator {
         deductions.add(new PagIBIGDeduction());  // Add Pag-IBIG
     }
 
-    // Calculate total deductions
+    // Calculate total deductions based on basic salary
     public double calculateTotalDeductions(double basicSalary) {
         return deductions.stream()  // Create stream
             .mapToDouble(d -> d.calculate(basicSalary))  // Calculate each
             .sum();  // Sum all deductions
     }
 
-    // Calculate withholding tax
+    // Calculate withholding tax based on taxable income
     public static double calculateWithholdingTax(double taxableIncome) {
         if (taxableIncome <= 20832) return 0.0;                          // Tax exempt
         if (taxableIncome <= 33333) return (taxableIncome - 20833) * 0.20; // 20% bracket
@@ -107,7 +107,7 @@ class PayrollCalculator {
     }
 }
 
-// Represents an employee
+// Represents an employee with basic details 
 class Employee {
     String employeeNumber;   // Employee ID
     String fullName;        // Full name
@@ -133,7 +133,7 @@ class Employee {
     public double getHourlyRate() { return hourlyRate; }
 }
 
-// Manages attendance records
+// Manages employee attendance records
 class AttendanceRecord {
     Map<String, Map<String, String[]>> attendanceData;  // Employee -> Date -> Times
     
@@ -169,9 +169,9 @@ class AttendanceRecord {
     }
 }
 
-// Handles data loading from files
+// Handles employee and attendance data from CSV files
 class DataLoader {
-    // Load employee data from CSV
+    // Load employee data from CSV file and stores it in HashMap
     public static Map<String, Employee> loadEmployees(String filePath) throws IOException {
         Map<String, Employee> employees = new HashMap<>();  // Create storage
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -199,7 +199,7 @@ class DataLoader {
         return employees;  // Return populated map
     }
 
-    // Load attendance data from CSV
+    // Load attendance data from CSV file
     public static void loadAttendance(AttendanceRecord attendance, String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine();  // Skip header
@@ -218,7 +218,7 @@ class DataLoader {
     }
 }
 
-// Manages user interface
+// MenuManages class handles the user interface and menu navigation 
 class MenuManager {
     Scanner scanner;                      // Input handler
     Map<String, Employee> employees;      // Employee data
@@ -233,7 +233,7 @@ class MenuManager {
         payrollCalculator = new PayrollCalculator();  // Create calculator
     }
 
-    // Display main menu
+    // Display the main menu and processes users choices 
     public void showMenu() {
         int choice;
         do {
@@ -252,7 +252,7 @@ class MenuManager {
         } while (choice != 5);           // Loop until exit
     }
 
-    // Route menu selection
+    // Processes the users menu choice 
     private void processChoice(int choice) {
         switch (choice) {
             case 1 -> displayEmployeeInfo();  // Show employee details
@@ -264,7 +264,7 @@ class MenuManager {
         }
     }
 
-    // Option 1: Display employee information
+    // Option 1: Displays information of a specific employee based on employee number
     private void displayEmployeeInfo() {
         System.out.print("Enter Employee Number: ");
         String empNumber = scanner.nextLine().trim();  // Get input
@@ -282,19 +282,19 @@ class MenuManager {
         }
     }
 
-    // Option 2: Calculate hours worked
+    // Option 2: Calculate total hours worked by an employee within a given data 
     private void computeHoursWorked() {
         System.out.print("Enter employee number: ");
-        String empNumber = scanner.nextLine();  // Get ID
+        String empNumber = scanner.nextLine();  // Get employee ID
         
-        // Get date range
+        // Get date range from user 
         System.out.print("Enter start date (MM/dd/yyyy): ");
         String startDateStr = scanner.nextLine();
         System.out.print("Enter end date (MM/dd/yyyy): ");
         String endDateStr = scanner.nextLine();
 
         try {
-            // Parse dates
+            // Parse date
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date startDate = dateFormat.parse(startDateStr);
             Date endDate = dateFormat.parse(endDateStr);
@@ -304,35 +304,35 @@ class MenuManager {
                 attendance.getAttendanceInRange(empNumber, startDate, endDate);
             
             long totalMinutes = 0;
-            // Process each record
+            // Process each attendance record
             for (Map.Entry<String, String[]> entry : attendanceData.entrySet()) {
                 long minutes = calculateTimeDifferenceMinutes(
                     entry.getValue()[0], entry.getValue()[1]);  // Calculate minutes
                 totalMinutes += minutes;  // Accumulate total
-                // Print daily hours
+                // Print daily hours worked
                 System.out.printf("Date: %s, Hours: %s%n", 
                     entry.getKey(), formatTimeDifference(minutes));
             }
             
-            // Print total hours
+            // Print total hours worked
             System.out.printf("Total Hours: %s%n", formatTimeDifference(totalMinutes));
         } catch (ParseException e) {
-            System.out.println("Invalid date format.");  // Handle parse error
+            System.out.println("Invalid date format.");  // Handle parsing error
         }
     }
 
-    // Option 3: Calculate gross salary
+    // Option 3: Calculate gross salary of an employee 
     private void computeGrossSalary() {
         System.out.print("Enter employee number: ");
-        String empNumber = scanner.nextLine();  // Get ID
+        String empNumber = scanner.nextLine();  // Get employee ID
         Employee emp = employees.get(empNumber);  // Find employee
         
-        if (emp == null) {  // Check existence
+        if (emp == null) {  // Check employee if exist
             System.out.println("Employee not found.");
             return;
         }
 
-        // Get date range
+        // Get date range from user input 
         System.out.print("Enter start date (MM/dd/yyyy): ");
         String startDateStr = scanner.nextLine();
         System.out.print("Enter end date (MM/dd/yyyy): ");
@@ -349,28 +349,30 @@ class MenuManager {
                 attendance.getAttendanceInRange(empNumber, startDate, endDate);
             
             long totalMinutes = 0;
-            // Sum all minutes
+            // Sum up total minutes worked 
             for (Map.Entry<String, String[]> entry : attendanceData.entrySet()) {
                 totalMinutes += calculateTimeDifferenceMinutes(
                     entry.getValue()[0], entry.getValue()[1]);
             }
             
-            // Calculate and display
+            // Calculate total hours and gross salary 
             double totalHours = totalMinutes / 60.0;
             double grossSalary = totalHours * emp.getHourlyRate();
+
+            // Display calculated gross salary
             System.out.printf("Gross salary for %s: PHP %.2f%n", emp.getFullName(), grossSalary);
         } catch (ParseException e) {
-            System.out.println("Invalid date format.");  // Handle error
+            System.out.println("Invalid date format.");  // Handle parsing error
         }
     }
 
-    // Option 4: Calculate net salary
+    // Option 4: Calculate net salary of an employee 
     private void computeNetSalary() {
         System.out.print("Enter employee number: ");
-        String empNumber = scanner.nextLine();  // Get ID
+        String empNumber = scanner.nextLine();  // Get employee ID
         Employee emp = employees.get(empNumber);  // Find employee
         
-        if (emp == null) {  // Check existence
+        if (emp == null) {  // Check if employee exist
             System.out.println("Employee not found.");
             return;
         }
@@ -382,7 +384,7 @@ class MenuManager {
         double withholdingTax = PayrollCalculator.calculateWithholdingTax(taxableIncome);
         double netSalary = taxableIncome - withholdingTax;
 
-        // Display breakdown
+        // Display net salary breakdown
         System.out.println("\nNet Salary Calculation:");
         System.out.printf("Basic Salary: PHP %.2f%n", basicSalary);
         System.out.printf("Total Deductions: PHP %.2f%n", totalDeductions);
@@ -391,7 +393,7 @@ class MenuManager {
         System.out.printf("Net Salary: PHP %.2f%n", netSalary);
     }
 
-    // Calculate minutes between two times
+    // Calculate minutes between two times login and log out 
     private long calculateTimeDifferenceMinutes(String logIn, String logOut) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("HH:mm");  // Time format
@@ -403,26 +405,26 @@ class MenuManager {
         }
     }
 
-    // Format minutes to HH:mm
+    // Converts total minutes into format string HH:mm
     private String formatTimeDifference(long minutes) {
         return (minutes < 0) ? "Invalid" :  // Handle errors
             String.format("%d:%02d", minutes / 60, minutes % 60);  // Format as hours:minutes
     }
 }
 
-// Main application class
+// Main application class that initializes and runs the payroll system 
 public class RevisedMS2 {
     public static void main(String[] args) {
         try {
-            // Load data
+            // Load employee data from CSV file 
             Map<String, Employee> employees = DataLoader.loadEmployees("src/motorph_employee_data_complete.csv");
             AttendanceRecord attendance = new AttendanceRecord();
             DataLoader.loadAttendance(attendance, "src/attendance_record.csv");
             
-            // Start application
+            // Start the application menu with loaded data
             new MenuManager(employees, attendance).showMenu();
         } catch (IOException e) {
-            System.err.println("Error loading data: " + e.getMessage());  // Handle file errors
+            System.err.println("Error loading data: " + e.getMessage());  // Handle file reading errors
         }
     }
 }
